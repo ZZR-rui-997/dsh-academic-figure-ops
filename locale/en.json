@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Academic figure ops",
+    "description": "Figure rules for papers and reports: compute the printed font size from your text width before exporting, verify the dropped pixels, choose the chart type that matches the message, and pick from 19 reproducible nature-style recipes. Includes figstyle.py, check_figure.py and overlap_audit.py."
+  }
+}

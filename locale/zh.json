@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "学术制图规程",
+    "description": "论文与报告的插图规程：出图前先按正文宽度反算印刷字号、落盘后验收像素与有效分辨率、按表达意图选图型，并附 19 个可复现的期刊风格配方。自带 figstyle.py、check_figure.py 与 overlap_audit.py。"
+  }
+}

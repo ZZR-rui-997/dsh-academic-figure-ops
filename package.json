@@ -1,0 +1,56 @@
+{
+  "name": "dsh-academic-figure-ops",
+  "version": "1.0.0",
+  "description": "Figure production rules for academic papers: compute the printed font size from your text width, verify the exported pixels, and pick a chart type that matches the message.",
+  "type": "module",
+  "license": "MIT",
+  "author": "ZZR-rui-997",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZZR-rui-997/dsh-academic-figure-ops.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ZZR-rui-997/dsh-academic-figure-ops/issues"
+  },
+  "homepage": "https://github.com/ZZR-rui-997/dsh-academic-figure-ops#readme",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "dsh-bundle",
+    "deepseek-harness",
+    "cordis",
+    "skill",
+    "matplotlib",
+    "figures",
+    "publication",
+    "typography",
+    "cfd"
+  ],
+  "main": "./index.js",
+  "icon": "./icon.png",
+  "exports": {
+    ".": "./index.js",
+    "./skills/*": "./skills/*",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.png"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "skills",
+    "locale/*.json",
+    "icon.png",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "dsh": ">=0.2.2-rc.1 <0.3.0",
+    "node": ">=22.0.0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
