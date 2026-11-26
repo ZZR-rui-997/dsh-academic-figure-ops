@@ -10,6 +10,7 @@ Installing the bundle registers the `academic-figure-ops` skill, so the agent lo
 - **Three checks per export**: printed font size, effective resolution after scaling, and the actual pixel width of the file. A figure can pass one and fail the others; that gap is where "it looked fine on screen" comes from.
 - **Chart type matches the message**, with an anti-pattern list for the usual mistakes (two y-axes, truncated axes, rainbow colormaps, decoration as data).
 - **CFD post-processing conventions** for contour panels, colour bars and multi-case comparisons.
+- **3D rendering route** (`pyvista`) for figures whose geometry is genuinely three-dimensional: isosurfaces, phase interfaces and multi-view panels, with the lighting/colour recipe and the three pitfalls that cost a rework.
 - **19 reproducible recipes** (`assets/case-gallery/`): every case ships a script, a case card explaining what it is good for, and a preview. All recipes use synthetic data with a fixed seed, so they run anywhere.
 
 ## What is inside
@@ -18,7 +19,8 @@ Installing the bundle registers the `academic-figure-ops` skill, so the agent lo
 skills/academic-figure-ops/
 ├── SKILL.md                     the rules the agent reads
 ├── references/                  chart selection, hard parameters, anti-patterns,
-│                                resolution & format, CFD patterns, schematics, QA
+│                                resolution & format, CFD patterns, 3D rendering,
+│                                schematics, QA
 ├── scripts/
 │   ├── figstyle.py              the single implementation of the house style
 │   ├── check_figure.py          read-only verifier for an exported figure

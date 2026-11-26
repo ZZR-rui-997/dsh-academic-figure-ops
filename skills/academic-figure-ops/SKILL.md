@@ -3,7 +3,7 @@ name: academic-figure-ops
 description: 学术插图的操作规程与可执行工具——版心宽度可参数化的字号反算链、落盘尺寸与分辨率验收、CFD 后处理云图成图范式、按论证意图选图型、审丑清单、示意图与流程图双轨画法、图件案例卡体例。当你要画新图、调字号、改 figsize、判断"这张图印在纸上字够不够大"、给一批图统一风格、或把落盘图批量过验收时，先读它。附两个可直接运行的脚本：figstyle.py（样式的唯一实现）与 check_figure.py（只读验收器）。
 whenToUse: 出图、改字号、改画布尺寸、判断落盘图是否达标、批量统一图风格、写图注与分幅标号、做示意图或流程图、给 CFD 结果出云图、投稿前查 dpi 与矢量格式时。
 metadata:
-  version: 1.0.0
+  version: 1.0.1
   license: MIT
   tags: [figures, matplotlib, typography, cfd, publication-quality]
   requires: [numpy, matplotlib, Pillow]
@@ -26,6 +26,8 @@ metadata:
 **装法 B（bundle）**：安装 `dsh-academic-figure-ops` bundle，一条命令装进当前 profile（版本要求以 bundle manifest 为准）。
 
 **依赖**：Python 3.10+（脚本用了 `str | Path`、`list[str]` 这类 3.10 语法）+ `numpy` + `matplotlib` + `Pillow`。Pillow 只在验收器与 `saved_width_in()` 里用得上，但缺了 `check_figure.py` 会直接 exit 3，所以别省。建议装在独立 venv 里，别用裸系统 python（最常见的报错是 `ModuleNotFoundError: No module named 'numpy'`）。
+
+**可选依赖**：真三维场景另需 `pyvista`（本文实测 0.49.3，VTK 9.7.1 底座）。它只在 `references/cfd-3d-render.md` 这条渲染路线上用到，不装不影响其余功能，也不进 `requires`。
 
 **第一次用先自检**：
 
@@ -314,10 +316,11 @@ printed = (10.5 · w/版心宽) · 版心宽 / (α · w) = 10.5/α      ← 与 
 - **沿程剖面 / 时间曲线**：与数据图完全同口径，走 `figstyle`。
 - **参数敏感性**：小多图（grid）比叠 5 条线清楚，每格共享相同轴范围与 colorbar。
 - **网格 / 几何示意**：矢量线稿或 TikZ，不用云图配色。
+- **真三维场景**：几何本体就是三维的（带起伏的上下两个界面、厚度/间隙场、相界面推进），或需要多视角并排交代空间关系时，走 pyvista 渲染路线，不要硬用 2D 云图去"假装立体"；渲染配方、三个实测坑与多机位做法见 `references/cfd-3d-render.md`。
 
 **常见错误**：直接从后处理器截图贴进文档（像素 dpi 不够、字体不可控、字号与正文不匹配）；colorbar 渐变带缺 tick；同一张图同时表达两个量；导出图片时带后处理器的白边与 UI 痕迹——一律回原始场数据重画。
 
-成图范式与代码见 `references/cfd-figure-patterns.md`。
+2D 云图 / 流线 / 剖面的成图范式与代码见 `references/cfd-figure-patterns.md`；真三维场景（等值面、相界面、多机位、光照与配色）见 `references/cfd-3d-render.md`。3D 图落盘后与 2D 图同一套验收：过 `check_figure.py`，字号与有效分辨率都不打折。
 
 ## 七、示意图 / 流程图（双轨）
 
@@ -392,6 +395,7 @@ academic-figure-ops/
 │   ├── resolution-and-format.md      分辨率与交付格式（期刊基线 + 换算 + 矢量可编辑）
 │   ├── chart-selection.md            按论证意图选图型（含 n 小怎么办、分幅/colorbar 规矩）
 │   ├── cfd-figure-patterns.md        CFD 云图/流线/剖面/小多图的成图范式
+│   ├── cfd-3d-render.md              三维渲染章（pyvista 路线：真 3D 场景 / 多视角 / 光照配色 / 实测坑）
 │   ├── qa-checklist.md               落盘前核验清单（可勾选，C/D 两段）
 │   ├── anti-patterns.md              审丑清单：看到就改（22 条 + 快速自检）
 │   ├── schematic-and-flowchart.md    示意图/流程图双轨画法（七原型/规格单/语义色/验收）
@@ -415,4 +419,5 @@ academic-figure-ops/
 - **不管正文排版**：图注字号、图表编号、题注位置，以及正文口径、项目流程、评审与交付流程，各有专门 skill 或工具负责。**制图只管图；正文口径、项目流程另有专门 skill，别在这里掺。**
 - **素材库是参考不是模板**：19 个案例教图型与手法；不许为了“像案例”牺牲字号与分辨率，验收线不变。
 - **多栈策略**：正文图一律 matplotlib（可复现、可审计）。plotly / scienceplots 之类可以做交互探索或样式参考，但**成图不得直接进正文**——它们不带本 skill 的字号/版心保证，须在 matplotlib 里按 `figstyle` 重画，或在交付记录里注明例外原因。
+  **3D 渲染栈**：真三维场景（三维几何体、等值面、相界面、多机位组合）用 `pyvista`（VTK 底座，本文实测 0.49.3 / VTK 9.7.1）。它只负责渲染，2D 云图仍走 matplotlib + `figstyle`；渲染帧落盘后同样要过 `check_figure.py`。用法、光照与配色、三个实测坑见 `references/cfd-3d-render.md`；这条路不依赖 Blender / ParaView。
 - **版心宽示例值不是标准**：14.65 cm 只是“A4 + 3.17 cm 页边距”这一种常见排版的量法；换模板就换值，公式与脚本都不用改。
