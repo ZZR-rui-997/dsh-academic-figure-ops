@@ -3,7 +3,7 @@ name: academic-figure-ops
 description: 学术插图的操作规程与可执行工具——版心宽度可参数化的字号反算链、落盘尺寸与分辨率验收、CFD 后处理云图成图范式、按论证意图选图型、审丑清单、示意图与流程图双轨画法、图件案例卡体例。当你要画新图、调字号、改 figsize、判断"这张图印在纸上字够不够大"、给一批图统一风格、或把落盘图批量过验收时，先读它。附两个可直接运行的脚本：figstyle.py（样式的唯一实现）与 check_figure.py（只读验收器）。
 whenToUse: 出图、改字号、改画布尺寸、判断落盘图是否达标、批量统一图风格、写图注与分幅标号、做示意图或流程图、给 CFD 结果出云图、投稿前查 dpi 与矢量格式时。
 metadata:
-  version: 1.0.1
+  version: 1.0.2
   license: MIT
   tags: [figures, matplotlib, typography, cfd, publication-quality]
   requires: [numpy, matplotlib, Pillow]
@@ -306,7 +306,31 @@ printed = (10.5 · w/版心宽) · 版心宽 / (α · w) = 10.5/α      ← 与 
 
 **快速自检**：把图缩到版心宽看一眼（示例 14.65 cm ≈ 553 px @96 dpi），字号与元素冲突当场现形。这一步 10 秒，能挡掉上面一半的问题。
 
-## 六、CFD 后处理云图范式
+## 六、七条硬规矩（吸收自成熟制图工具的方法论）
+
+这七条管的是「这张图能不能被别的工具接手、改稿时会不会做假修复」，是从开源制图
+工具 Tavotto 的公开文档里提炼并在本 skill 落地的（它家的数值不进本 skill 的判定）。
+细则、四级话术表与口径对表见 `references/tavotto-inspired-rules.md`。
+
+1. **图文件契约**：脚本与产物同目录；产物名是静态可解析的字面量（不来自 argv / 时间戳 / 遍历）；
+   无参 `main()`、import 期零副作用；交付矢量 PDF，位图 raster 除外且 ≥300 dpi；随机种子固定；
+   禁 `plt.show()`（阻塞无人值守渲染），落盘脚本走 `show_or_save`。
+2. **preflight 四级**：to fix / to review / not verifiable / suggestion。**任何一级都不锁交付**，
+   但 to-fix 与 not-verifiable 必须写进交付说明，不能「看起来还行就交」。
+3. **克制原则**：数据之外的效果（背景色块、指示箭头、「peak here」式文字、高亮/星号装饰）
+   一个都不擅自加；确实有助理解就先问要加什么、为什么，点头才画。
+4. **多子图四条**：不用 matplotlib 之外的东西拼图（不拼位图、不用 LaTeX subfigure）；
+   每个子图的 x/y 轴标题各自标全；不 `sharex/sharey`（要对齐就逐个 `set_xlim/set_ylim`）；
+   `set_title` 各归各位，不挤整图左上角。
+5. **字重按角色**：figure / title / ticklabel / legend / annotation 一律 normal，
+   **只有轴标题 bold**，不整图一刀切。
+6. **保留式规范化禁止绕路**：不缩放位图冒充「已改字号」、不整份替换 SVG/PDF、不套全局
+   rcParams 主题、不为消除拥挤删曲线/图例项/刻度/文字、不改配色与数据与坐标范围、
+   字体缺失就装或换并如实报告。
+7. **期刊规范按字段记**：图类条件 / 投稿阶段（修稿 / 录用后 / 生产不可互换）/ 比较符
+   （≥ ≤ in not_in）/ 要求强度（must / preferred / permitted）/ 来源原文 / 「未规定 ≠ 未见规定」。
+
+## 七、CFD 后处理云图范式
 
 前提：本 skill **不含求解器模板**，它管“结果已经在手，怎么画成能印的图”。下面的做法来自 Fluent / CFD-Post 这类工具的通用输出流程（导出为场数据后进 matplotlib，或后处理器出图后按本 skill 的版心/字号/分辨率验收）；换软件时机制相同，具体命令与导出格式自己换。
 
@@ -322,7 +346,7 @@ printed = (10.5 · w/版心宽) · 版心宽 / (α · w) = 10.5/α      ← 与 
 
 2D 云图 / 流线 / 剖面的成图范式与代码见 `references/cfd-figure-patterns.md`；真三维场景（等值面、相界面、多机位、光照与配色）见 `references/cfd-3d-render.md`。3D 图落盘后与 2D 图同一套验收：过 `check_figure.py`，字号与有效分辨率都不打折。
 
-## 七、示意图 / 流程图（双轨）
+## 八、示意图 / 流程图（双轨）
 
 **判据**：要反复改、给非制图者看（老师/同事会要你改十版）→ **手绘轨**（draw.io、PPT、Illustrator 之类矢量工具）；同构要迭代 ≥5 版、要进版本库、要参数化重出 → **代码轨**（TikZ / matplotlib 的 patch 组合）。
 
@@ -336,7 +360,7 @@ printed = (10.5 · w/版心宽) · 版心宽 / (α · w) = 10.5/α      ← 与 
 
 判据、原型图、规格单体例、画法细节、语义色表、验收清单一律见 `references/schematic-and-flowchart.md`。
 
-## 八、图件案例卡体例
+## 九、图件案例卡体例
 
 看到一张好图（期刊的、别人的、自己以前画的），把它拆成可复用的知识。图不是“学会了就会”，是“见过才想得起来”；但“见过”很容易变成“只记得好看”，案例卡强制你拆到**能复现的程度**。
 
@@ -361,7 +385,7 @@ recipe: <配方脚本路径，或“无”>  preview: <预览图路径>
 
 模板全文、`purpose` 词表（11 类，含频次分布）、`wow` 分级标准、三个拆解范例，见 `references/case-card.md`。
 
-## 九、案例库：19 个可跑配方
+## 十、案例库：19 个可跑配方
 
 位置：`assets/case-gallery/`（扁平结构，一个案例三件套，无子目录）：
 
@@ -381,11 +405,11 @@ recipe: <配方脚本路径，或“无”>  preview: <预览图路径>
 
 **来源与授权**：这些案例的版式观察来自一个公开的顶刊图案例仓库（**无 license**）。因此：**只学手法，不逐字复制进交付物**；照着仿写时在脚本注释里记下出处。本目录里的 19 个配方与 png 全部是按手法用合成数据重画的，随本 skill 一并分发。
 
-## 十、文件地图
+## 十一、文件地图
 
 ```
 academic-figure-ops/
-├── SKILL.md                          本文件：概念 + 三个动作 + 速查 + 边界
+├── SKILL.md                          本文件：概念 + 三个动作 + 速查 + 七条硬规矩 + 边界
 ├── scripts/
 │   ├── figstyle.py                   样式的唯一实现 + 内置自检（python figstyle.py）
 │   ├── check_figure.py               只读验收器（两种口径 + 三类判据 + 退出码契约）
@@ -399,6 +423,7 @@ academic-figure-ops/
 │   ├── qa-checklist.md               落盘前核验清单（可勾选，C/D 两段）
 │   ├── anti-patterns.md              审丑清单：看到就改（22 条 + 快速自检）
 │   ├── schematic-and-flowchart.md    示意图/流程图双轨画法（七原型/规格单/语义色/验收）
+│   ├── tavotto-inspired-rules.md     七条硬规矩细则（图文件契约 / preflight 四级 / 克制原则 / 多子图 / 字重 / 禁止绕路 / 期刊体例 + 口径对表）
 │   └── case-card.md                  图件案例卡体例（模板/词表/分级/范例）
 └── assets/
     └── case-gallery/                 19 ×（.md + .py + .png）+ lib/ 共享模块
@@ -410,7 +435,7 @@ academic-figure-ops/
 - `check_figure.py` 是**只读**验收器：不 import `figstyle` 的 rcParams，只读 PNG 像素与 pHYs，靠你显式声明的口径判定。它判不了的东西它不猜（两参数都不给 → exit 2）。
 - `overlap_audit.py`：`audit_pre_render(fig)` 在渲染前机械检测“图例/文字压数据”（每线抽稀 400 点）；落盘后另有位图启发式（大块纯白可疑区）。`--update-baseline` 登记存量问题，基线外新问题 = FAIL。位图层判据有限，**预渲染审计才是主判据**。
 
-## 十一、这个 skill 的边界（如实说明）
+## 十二、这个 skill 的边界（如实说明）
 
 - **不判科学结论对不对**。它管图能不能看清、数据有没有画错（轴范围、单位、误差棒含义、归一化、分幅可比性）；不管你的模型假设、实验设计、统计推断是否成立。**字号达标不等于图好。**
 - **`check_figure.py` 只验字号与可选的有效分辨率**：不判配色、不判可读性、不判论证是否成立。`qa-checklist.md` 里“只能人工判断”的那一段，谁也不能替你过。

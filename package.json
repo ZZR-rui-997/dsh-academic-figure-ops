@@ -1,6 +1,6 @@
 {
   "name": "dsh-academic-figure-ops",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Figure production rules for academic papers: compute the printed font size from your text width, verify the exported pixels, and pick a chart type that matches the message.",
   "type": "module",
   "license": "MIT",
